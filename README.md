@@ -5,7 +5,7 @@
 Spinix does two things while Claude Code or Codex is working. It tells you the instant the agent finishes a turn, so you stop babysitting a spinner that already stopped. And while the agent thinks, it puts one quiet line on that spinner: a product from another indie builder in the cross-promo ring, or a perk from an AI company trying to reach developers. Add your own product to the ring and it rides other builders' spinners too. They see yours, you see theirs.
 
 ```
-✶ Warp: 3 months of Pro for Spinix devs ↗
+✶ Small Bets: the community for indie hackers ↗
 ```
 
 That line is the whole footprint. No banners, no popups, no video, nothing near your code.
