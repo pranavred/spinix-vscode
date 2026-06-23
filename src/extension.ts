@@ -356,6 +356,70 @@ export async function activate(ctx: vscode.ExtensionContext) {
   statusBar.show();
   ctx.subscriptions.push(statusBar);
 
+  // Register commands BEFORE the consent gate below. That gate can return early
+  // (a remembered decline, or anything other than "Agree"); registration used to
+  // live after those returns, so a user who declined got NO commands at all —
+  // including "Spinix: Enable", the documented way back in. They're always live now.
+  ctx.subscriptions.push(
+    vscode.commands.registerCommand("spinix.signIn", () => signIn(ctx)),
+    vscode.commands.registerCommand("spinix.signOut", async () => {
+      await clearToken(ctx);
+      clearCliAuth();
+      await setStatus(ctx);
+      vscode.window.showInformationMessage("Spinix: signed out.");
+    }),
+    vscode.commands.registerCommand("spinix.openAd", () => void openAd(ctx)),
+    vscode.commands.registerCommand("spinix.restore", () => {
+      restoreIntegration();
+      tel.send("restore_run");
+      vscode.window.showInformationMessage("Spinix: restored Claude Code settings.");
+    }),
+    vscode.commands.registerCommand("spinix.status", async () => {
+      const signedIn = !!(await getToken(ctx));
+      const action = await vscode.window.showInformationMessage(
+        signedIn
+          ? "Spinix — on. We ping you when your agent's done, and your think-time ranks on the board. Perks appear in the spinner as advertisers come online."
+          : "Spinix — sign in to rank on the board and promote your product in the ring.",
+        signedIn ? "Open dashboard" : "Sign in",
+      );
+      if (action === "Open dashboard") {
+        void vscode.env.openExternal(vscode.Uri.parse(`${cfg().backendUrl}/dashboard`));
+      } else if (action === "Sign in") {
+        void signIn(ctx);
+      }
+    }),
+    vscode.commands.registerCommand("spinix.enable", async () => {
+      // Explicitly enabling IS consent — also the recovery path after a decline.
+      await ctx.globalState.update("spinix.consented", true);
+      await ctx.globalState.update("spinix.declined", false);
+      await vscode.workspace.getConfiguration("spinix").update("enabled", true, true);
+      installIntegration(ctx);
+      await setStatus(ctx);
+    }),
+    vscode.commands.registerCommand("spinix.disable", async () => {
+      await vscode.workspace.getConfiguration("spinix").update("enabled", false, true);
+      restoreIntegration();
+      clearCliAuth();
+      adBar?.hide(); // may run before adBar is created on a very slow activation
+      tel.send("disabled");
+    }),
+    // Live settings: flip the notify popup or the whole integration without a reload.
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration("spinix.notify")) {
+        writePrefs(); // the Stop hook reads this on its next "done" — no reinstall needed
+      }
+      if (e.affectsConfiguration("spinix.enabled")) {
+        if (cfg().enabled) {
+          installIntegration(ctx);
+        } else {
+          restoreIntegration();
+          clearCliAuth();
+          adBar?.hide();
+        }
+      }
+    }),
+  );
+
   // First-run consent before touching any settings.
   const consented = ctx.globalState.get<boolean>("spinix.consented") === true;
   const declined = ctx.globalState.get<boolean>("spinix.declined") === true;
@@ -418,66 +482,6 @@ export async function activate(ctx: vscode.ExtensionContext) {
         if (a === "Sign in") void signIn(ctx);
       });
   }
-
-  ctx.subscriptions.push(
-    vscode.commands.registerCommand("spinix.signIn", () => signIn(ctx)),
-    vscode.commands.registerCommand("spinix.signOut", async () => {
-      await clearToken(ctx);
-      clearCliAuth();
-      await setStatus(ctx);
-      vscode.window.showInformationMessage("Spinix: signed out.");
-    }),
-    vscode.commands.registerCommand("spinix.openAd", () => void openAd(ctx)),
-    vscode.commands.registerCommand("spinix.restore", () => {
-      restoreIntegration();
-      tel.send("restore_run");
-      vscode.window.showInformationMessage("Spinix: restored Claude Code settings.");
-    }),
-    vscode.commands.registerCommand("spinix.status", async () => {
-      const signedIn = !!(await getToken(ctx));
-      const action = await vscode.window.showInformationMessage(
-        signedIn
-          ? "Spinix — on. We ping you when your agent's done, and your think-time ranks on the board. Perks appear in the spinner as advertisers come online."
-          : "Spinix — sign in to rank on the board and promote your product in the ring.",
-        signedIn ? "Open dashboard" : "Sign in",
-      );
-      if (action === "Open dashboard") {
-        void vscode.env.openExternal(vscode.Uri.parse(`${cfg().backendUrl}/dashboard`));
-      } else if (action === "Sign in") {
-        void signIn(ctx);
-      }
-    }),
-    vscode.commands.registerCommand("spinix.enable", async () => {
-      // Explicitly enabling IS consent — also the recovery path after a decline.
-      await ctx.globalState.update("spinix.consented", true);
-      await ctx.globalState.update("spinix.declined", false);
-      await vscode.workspace.getConfiguration("spinix").update("enabled", true, true);
-      installIntegration(ctx);
-      await setStatus(ctx);
-    }),
-    vscode.commands.registerCommand("spinix.disable", async () => {
-      await vscode.workspace.getConfiguration("spinix").update("enabled", false, true);
-      restoreIntegration();
-      clearCliAuth();
-      adBar?.hide(); // may run before adBar is created on a very slow activation
-      tel.send("disabled");
-    }),
-    // Live settings: flip the notify popup or the whole integration without a reload.
-    vscode.workspace.onDidChangeConfiguration((e) => {
-      if (e.affectsConfiguration("spinix.notify")) {
-        writePrefs(); // the Stop hook reads this on its next "done" — no reinstall needed
-      }
-      if (e.affectsConfiguration("spinix.enabled")) {
-        if (cfg().enabled) {
-          installIntegration(ctx);
-        } else {
-          restoreIntegration();
-          clearCliAuth();
-          adBar?.hide();
-        }
-      }
-    }),
-  );
 
   // Status-bar ad surface for agents without a statusline hook
   // (Claude Code VS Code panel, Codex CLI) — driven by the busy-watcher.
