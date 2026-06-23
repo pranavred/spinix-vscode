@@ -1,8 +1,8 @@
 {
   "name": "spinix",
   "displayName": "Spinix",
-  "description": "Pings you the moment your AI agent finishes — and fills the wait with perks & offers from the AI companies trying to reach developers. Track who made the AI think the most.",
-  "version": "0.5.0",
+  "description": "Get pinged when your AI agent finishes. While it thinks, its spinner shows indie products from the cross-promo ring and perks from AI companies. Track who made the AI think the most.",
+  "version": "1.0.0",
   "publisher": "spinix",
   "type": "commonjs",
   "icon": "media/icon.png",
@@ -36,8 +36,8 @@
       "title": "Spinix",
       "properties": {
         "spinix.backendUrl": { "type": "string", "default": "https://spinixads.com", "scope": "application", "description": "Spinix backend base URL." },
-        "spinix.enabled": { "type": "boolean", "default": true, "description": "Show perks & offers from AI companies in the Claude Code spinner." },
-        "spinix.notify": { "type": "boolean", "default": true, "description": "Show a desktop notification the moment your agent finishes. Takes effect immediately — your think-time still counts on the board either way. Fully reversible." }
+        "spinix.enabled": { "type": "boolean", "default": true, "description": "Show the Spinix line in the Claude Code spinner: cross-promo ring products and perks from AI companies." },
+        "spinix.notify": { "type": "boolean", "default": true, "description": "Show a desktop notification the moment your agent finishes. It takes effect immediately, your think-time still counts on the board either way, and it's fully reversible." }
       }
     }
   },

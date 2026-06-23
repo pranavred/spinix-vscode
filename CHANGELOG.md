@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0
+
+- First stable release.
+- The extension client is now open source under the MIT license at https://github.com/pranavred/spinix-vscode. You can read it, audit the privacy claims for yourself, or send a pull request.
+- Rewrote the README around how Spinix works today: notify-on-done, the indie cross-promo ring (your product rides other builders' spinners while their agents think, theirs ride yours), perks and offers from AI companies, and the think-time leaderboard.
+- No behavior changes from 0.5.0.
+
 ## 0.5.0
 
 - **Notify-on-done is now live-toggleable.** `spinix.notify` flips the desktop ping on or off without a reload, and your think-time still counts on the board either way. The Stop hook stays installed whenever Spinix is enabled, so think-time always accrues.

@@ -442,7 +442,7 @@ export async function activate(ctx: vscode.ExtensionContext) {
         signedIn ? "Open dashboard" : "Sign in",
       );
       if (action === "Open dashboard") {
-        void vscode.env.openExternal(vscode.Uri.parse(`${cfg().backendUrl}/me`));
+        void vscode.env.openExternal(vscode.Uri.parse(`${cfg().backendUrl}/dashboard`));
       } else if (action === "Sign in") {
         void signIn(ctx);
       }
