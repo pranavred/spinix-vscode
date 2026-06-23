@@ -6,7 +6,7 @@
   "publisher": "spinix",
   "type": "commonjs",
   "icon": "media/icon.png",
-  "license": "SEE LICENSE IN LICENSE.txt",
+  "license": "MIT",
   "homepage": "https://spinixads.com",
   "repository": { "type": "git", "url": "https://github.com/pranavred/spinix-vscode.git" },
   "bugs": { "url": "https://github.com/pranavred/spinix-vscode/issues" },
