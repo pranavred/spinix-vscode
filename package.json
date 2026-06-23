@@ -1,0 +1,64 @@
+{
+  "name": "spinix",
+  "displayName": "Spinix",
+  "description": "Pings you the moment your AI agent finishes — and fills the wait with perks & offers from the AI companies trying to reach developers. Track who made the AI think the most.",
+  "version": "0.5.0",
+  "publisher": "spinix",
+  "type": "commonjs",
+  "icon": "media/icon.png",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "homepage": "https://spinixads.com",
+  "repository": { "type": "git", "url": "https://github.com/pranavred/spinix-vscode.git" },
+  "bugs": { "url": "https://github.com/pranavred/spinix-vscode/issues" },
+  "pricing": "Free",
+  "galleryBanner": { "color": "#10151b", "theme": "dark" },
+  "keywords": ["notify", "notification", "claude-code", "codex", "agent", "perks", "offers", "spinner", "statusline"],
+  "engines": { "vscode": "^1.80.0" },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "spinix.signIn", "title": "Spinix: Sign in" },
+      { "command": "spinix.signOut", "title": "Spinix: Sign out" },
+      { "command": "spinix.restore", "title": "Spinix: Restore Claude Code" },
+      { "command": "spinix.status", "title": "Spinix: Show status" },
+      { "command": "spinix.enable", "title": "Spinix: Enable" },
+      { "command": "spinix.disable", "title": "Spinix: Disable" },
+      { "command": "spinix.openAd", "title": "Spinix: Open the current offer" }
+    ],
+    "menus": {
+      "commandPalette": [
+        { "command": "spinix.openAd", "when": "false" }
+      ]
+    },
+    "configuration": {
+      "title": "Spinix",
+      "properties": {
+        "spinix.backendUrl": { "type": "string", "default": "https://spinixads.com", "scope": "application", "description": "Spinix backend base URL." },
+        "spinix.enabled": { "type": "boolean", "default": true, "description": "Show perks & offers from AI companies in the Claude Code spinner." },
+        "spinix.notify": { "type": "boolean", "default": true, "description": "Show a desktop notification the moment your agent finishes. Takes effect immediately — your think-time still counts on the board either way. Fully reversible." }
+      }
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/extension.ts --bundle --platform=node --external:vscode --outfile=dist/extension.js --format=cjs && cp src/statusline.mjs dist/statusline.mjs && cp src/poster.mjs dist/poster.mjs && cp src/notify.mjs dist/notify.mjs",
+    "vscode:prepublish": "npm run build",
+    "package": "vsce package --no-dependencies",
+    "publish:vsce": "vsce publish --no-dependencies",
+    "publish:ovsx": "npx --yes ovsx publish --no-dependencies",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "jsonc-parser": "^3.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.80.0",
+    "@vscode/vsce": "^3.0.0",
+    "esbuild": "^0.21.5",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}
