@@ -19,3 +19,16 @@ export function isAllowedBackend(url: string): boolean {
     return false;
   }
 }
+
+export const DEFAULT_BACKEND = "https://spinixads.com";
+
+/**
+ * Normalize a user-configured backend URL and force it onto the allowlist.
+ * Trims, strips one trailing slash, and falls back to the production origin
+ * when the value is empty or not an allowed host — so a tampered or synced
+ * setting can never point sign-in, metering, or the bearer at another host.
+ */
+export function sanitizeBackendUrl(raw: string | undefined | null): string {
+  const trimmed = String(raw ?? "").trim().replace(/\/$/, "");
+  return trimmed && isAllowedBackend(trimmed) ? trimmed : DEFAULT_BACKEND;
+}

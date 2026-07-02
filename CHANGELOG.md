@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.0
+
+- **Security hardening: the backend host allowlist now covers every flow.** The
+  `spinix.backendUrl` setting is sanitized at the single point all features read
+  it from — sign-in, the spinner line, metering, and telemetry can only ever
+  talk to `spinixads.com` (or localhost during development). A tampered or
+  synced setting silently falls back to the production origin instead of being
+  honored. Previously the allowlist guarded only the CLI credential export.
+- No feature changes and no behavior changes for normal use.
+
 ## 1.0.0
 
 - First stable release.

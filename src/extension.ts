@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, copyFileSync } from
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { applyAdSettings, applyHookSettings, restoreSettings, parsesAsObject, priorAdSettings } from "./settings-edit";
+import { sanitizeBackendUrl } from "./backend-url";
 import { refreshPortfolio } from "./portfolio";
 import { postMetric } from "./metrics";
 import { ViewTracker } from "./view-tracker";
@@ -34,7 +35,7 @@ const activity = new AgentActivityWatcher();
 function cfg() {
   const c = vscode.workspace.getConfiguration("spinix");
   return {
-    backendUrl: (c.get<string>("backendUrl") ?? "").replace(/\/$/, ""),
+    backendUrl: sanitizeBackendUrl(c.get<string>("backendUrl")),
     enabled: c.get<boolean>("enabled") ?? true,
     notify: c.get<boolean>("notify") ?? true,
   };

@@ -2,7 +2,7 @@
   "name": "spinixads",
   "displayName": "Spinix — distribution for builders",
   "description": "Get pinged when your AI agent finishes. While it thinks, its spinner shows indie products from the cross-promo ring and perks from AI companies. Track who made the AI think the most.",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "publisher": "spinixads",
   "type": "commonjs",
   "icon": "media/icon.png",
